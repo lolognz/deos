@@ -1,9 +1,9 @@
-# audio_extraction/downloader.py
+# audio_extraction/download.py
 from yt_dlp import YoutubeDL
 import os
 
 
-def download_audio(youtube_url, output_dir="downloads"):
+def download_audio_from_youtube(youtube_url, output_dir="downloads"):
     os.makedirs(output_dir, exist_ok=True)
     ydl_opts = {
         'format': 'bestaudio/best',
