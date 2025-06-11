@@ -2,13 +2,19 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 from fastapi import BackgroundTasks
+from pydantic import BaseModel
 
 from app.models.request_models import BulkYouTubeRequest
 from app.models.request_models import YouTubeRequest
 from app.services.downloader import download_audio_from_youtube
+from app.services.transcriber import transcribe_audio
 
 router = APIRouter()
 log = logging.getLogger(__name__)
+
+
+class TranscribeRequest(BaseModel):
+    file_path: str
 
 
 @router.post("/download")
@@ -42,3 +48,17 @@ async def download_bulk(
         background_tasks.add_task(download_audio_from_youtube, url_str)
         tasks.append({"url": url_str, "status": "queued"})
     return {"tasks": tasks}
+
+
+@router.post("/transcribe")
+async def transcribe_audio_endpoint(req: TranscribeRequest):
+    """
+    Recibe { "file_path": "/ruta/a/audio.mp3" } y devuelve la transcripción completa.
+    """
+    try:
+        text = transcribe_audio(req.file_path)
+        return {"transcription": text}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

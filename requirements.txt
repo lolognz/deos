@@ -4,3 +4,4 @@ yt-dlp
 pydantic-settings
 pytest
 httpx
+openai-whisper
