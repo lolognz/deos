@@ -5,3 +5,6 @@ pydantic-settings
 pytest
 httpx
 openai-whisper
+pydantic
+transformers
+torch

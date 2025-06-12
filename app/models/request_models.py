@@ -9,3 +9,8 @@ class YouTubeRequest(BaseModel):
 
 class BulkYouTubeRequest(BaseModel):
     urls: List[HttpUrl]
+
+
+class SummarizeRequest(BaseModel):
+    text: str
+    level: str = "medium"

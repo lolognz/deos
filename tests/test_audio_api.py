@@ -41,3 +41,22 @@ def test_download_endpoint_success(monkeypatch, setup_tmp_download_dir):
     assert data['duration'] == 10
     assert data['url'] == 'https://www.youtube.com/watch?v=test'
     assert data['path'].endswith('abc.mp3')
+
+
+def test_summarize_endpoint_success(monkeypatch):
+    # Stubea la función en el router, no en el servicio
+    def fake_summary(text, level):
+        assert text == "Hola mundo"
+        assert level == "short"
+        return "Hola…"
+
+    import app.api.audio as audio_module
+    monkeypatch.setattr(audio_module, 'summarize_text', fake_summary)
+
+    response = client.post(
+        '/audio/summarize',
+        json={'text': 'Hola mundo', 'level': 'short'}
+    )
+    assert response.status_code == 200
+    data = response.json()
+    assert data['summary'] == "Hola…"

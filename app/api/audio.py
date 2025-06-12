@@ -5,8 +5,10 @@ from fastapi import BackgroundTasks
 from pydantic import BaseModel
 
 from app.models.request_models import BulkYouTubeRequest
+from app.models.request_models import SummarizeRequest
 from app.models.request_models import YouTubeRequest
 from app.services.downloader import download_audio_from_youtube
+from app.services.summarization import summarize_text
 from app.services.transcriber import transcribe_audio
 
 router = APIRouter()
@@ -60,5 +62,18 @@ async def transcribe_audio_endpoint(req: TranscribeRequest):
         return {"transcription": text}
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/summarize")
+async def summarize_endpoint(req: SummarizeRequest):
+    """
+    Recibe { text: str, level?: "short"|"medium"|"detailed" }
+    Devuelve { summary: str }.
+    """
+    try:
+        summary = summarize_text(req.text, req.level)
+        return {"summary": summary}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
