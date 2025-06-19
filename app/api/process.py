@@ -1,8 +1,10 @@
+from typing import List
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, HttpUrl
 
+from app.api.classify import TagScore
 from app.services.orchestrator import process_audio_url
 
 router = APIRouter()
@@ -20,6 +22,7 @@ class ProcessResponse(BaseModel):
     transcript: str
     summary: str
     topic: Optional[str]
+    tags: List[TagScore]
 
 
 @router.post("/process", response_model=ProcessResponse, status_code=200)

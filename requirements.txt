@@ -7,4 +7,5 @@ httpx
 openai-whisper
 pydantic
 transformers
-torch
+sentence-transformers
+torch>=1.7.0

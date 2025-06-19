@@ -1,5 +1,6 @@
 from typing import Optional, Dict
 
+from app.services.classifier import classify_text
 from app.services.downloader import download_audio_from_youtube
 from app.services.summarization import summarize_text
 from app.services.transcriber import transcribe_audio
@@ -41,12 +42,17 @@ def process_audio_url(
     # 3) Generar un resumen a partir de la transcripción
     summary = summarize_text(transcript, level=summary_level)
 
-    # 4) Construir y devolver el objeto de resultado
+    # 4) Clasificar por temática
+    tags = classify_text(summary, top_k=3, threshold=0.2)
+
+    # 5) Construir y devolver el objeto de resultado
     return {
         "url": youtube_url,
-        "title": title,
         "audio_path": audio_path,
+        "title": title,
+        "duration": duration,
         "transcript": transcript,
         "summary": summary,
-        "topic": topic
+        "topic": topic,
+        "tags": tags,
     }
