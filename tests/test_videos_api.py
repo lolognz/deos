@@ -128,7 +128,7 @@ def test_filter_by_date_range(db_setup):
     al menos aparece ese registro.
     """
     # Sacamos created_at del primer vídeo
-    first_video = db_setup.query(models.Video).get(1)
+    first_video = db_setup.get(models.Video, 1)
     date_from = first_video.created_at.isoformat()
     resp = client.get(f"/videos?date_from={date_from}")
     assert resp.status_code == 200

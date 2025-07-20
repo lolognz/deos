@@ -1,7 +1,6 @@
 # app/db/session.py
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Conexión a la base de datos (aquí puede ser SQLite o cualquier otra base de datos que uses)
 SQLALCHEMY_DATABASE_URL = "sqlite:///./data/deos.db"  # Cambia esto según tu configuración

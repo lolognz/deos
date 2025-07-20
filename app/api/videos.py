@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy.orm import Session
 
 from app.db import crud
@@ -14,49 +14,44 @@ router = APIRouter(tags=["videos"])
 # ——— Esquemas Pydantic ———
 
 class ClassificationSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     tag: str
     score: float
     created_at: datetime
 
-    class Config:
-        orm_mode = True
-
 
 class SummarySchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     level: str
     text: str
     created_at: datetime
 
-    class Config:
-        orm_mode = True
-
 
 class TranscriptSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     text: str
     created_at: datetime
 
-    class Config:
-        orm_mode = True
-
 
 class AudioSchema(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     path: str
     created_at: datetime
 
-    class Config:
-        orm_mode = True
-
 
 class VideoListItem(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    
     id: int
     url: str
     title: str
     duration: int
     topic: str
     created_at: datetime
-
-    class Config:
-        orm_mode = True
 
 
 class VideoDetail(VideoListItem):
