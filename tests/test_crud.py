@@ -34,7 +34,12 @@ def test_create_related_records(db_session):
     v = crud.create_video(db_session, "u", "t", 1, "x")
     a = crud.create_audio(db_session, v.id, "/path.mp3")
     t = crud.create_transcript(db_session, v.id, "texto")
-    s = crud.create_summary(db_session, v.id, "short", "res")
+    s = crud.create_summary(
+        db_session,
+        video_id=v.id,
+        level="short",
+        text="res"
+    )
     cls = crud.create_classifications(db_session, v.id, [("tag1", 0.9), ("tag2", 0.5)])
     assert a.video_id == v.id
     assert t.video_id == v.id
