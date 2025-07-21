@@ -5,10 +5,10 @@ pydantic==2.10.6
 pydantic-settings==2.8.1
 pytest==8.3.5
 httpx==0.27.2
-openai-whisper @ git+https://github.com/openai/whisper.git@c0d2f624c09dc18e709e37c2ad90c039a4eb72a2
+openai-whisper
 transformers==4.39.3
 sentence-transformers==2.6.1
-torch==2.2.2
+torch>=2.5.0
 SQLAlchemy==2.0.41
 alembic==1.13.3
 pdfplumber==0.10.2

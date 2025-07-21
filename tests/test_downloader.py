@@ -18,9 +18,10 @@ def cleanup_download_dir(tmp_path, monkeypatch):
 def patch_youtubedl(monkeypatch):
     # monkeypatch YoutubeDL.extract_info to avoid network calls
     from yt_dlp import YoutubeDL
+    
     def fake_extract_info(self, url, download):
         # Simulate extract_info and create dummy file
-        info = {'id': 'test123', 'title': 'Test Title', 'duration': 42, 'webpage_url': url}
+        info = {'id': 'test123', 'title': 'Test Title', 'duration': 42, 'webpage_url': url, 'ext': 'mp3'}
         # write dummy mp3 to settings.download_dir
         from app.core.config import settings
         os.makedirs(settings.download_dir, exist_ok=True)
@@ -28,8 +29,14 @@ def patch_youtubedl(monkeypatch):
         with open(dummy_path, 'wb') as f:
             f.write(b'test')
         return info
+    
+    def fake_prepare_filename(self, info):
+        # Simular prepare_filename para que devuelva la ruta correcta
+        from app.core.config import settings
+        return os.path.join(settings.download_dir, f"{info['id']}.mp3")
 
     monkeypatch.setattr(YoutubeDL, 'extract_info', fake_extract_info)
+    monkeypatch.setattr(YoutubeDL, 'prepare_filename', fake_prepare_filename)
 
 
 def test_download_audio_success(cleanup_download_dir):

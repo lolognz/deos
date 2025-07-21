@@ -9,9 +9,9 @@ router = APIRouter(prefix="", tags=["classification"])
 
 
 class ClassifyRequest(BaseModel):
-    text: str = Field(..., example="Texto a clasificar")
-    top_k: Optional[int] = Field(3, ge=1, example=3)
-    threshold: Optional[float] = Field(0.0, ge=0, le=1, example=0.3)
+    text: str = Field(..., json_schema_extra={"example": "Texto a clasificar"})
+    top_k: Optional[int] = Field(3, ge=1, json_schema_extra={"example": 3})
+    threshold: Optional[float] = Field(0.0, ge=0, le=1, json_schema_extra={"example": 0.3})
 
 
 class TagScore(BaseModel):

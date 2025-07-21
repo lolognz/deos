@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import (
     Column, Integer, String, DateTime, Text, Float, ForeignKey, func
@@ -16,7 +16,7 @@ class Video(Base):
     title = Column(String, nullable=False)
     duration = Column(Integer, nullable=False)
     topic = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     # relaciones 1:1
     audio = relationship("Audio", back_populates="video", uselist=False)
@@ -33,7 +33,7 @@ class Audio(Base):
     id = Column(Integer, primary_key=True, index=True)
     video_id = Column(Integer, ForeignKey("videos.id"), nullable=False)
     path = Column(String, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     video = relationship("Video", back_populates="audio")
 
@@ -44,7 +44,7 @@ class Transcript(Base):
     id = Column(Integer, primary_key=True, index=True)
     video_id = Column(Integer, ForeignKey("videos.id"), nullable=False)
     text = Column(Text, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc), nullable=False)
 
     video = relationship("Video", back_populates="transcript")
 
