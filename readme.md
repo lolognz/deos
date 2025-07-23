@@ -194,7 +194,7 @@ source .venv/bin/activate
 pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 
-    Requisito: Python ≥ 3.9
+    Requisito: Python ≥ 3.9 (3.8 ya no es compatible)
 
 2. Configuración
 
@@ -206,6 +206,10 @@ LOG_LEVEL=INFO
 
 3. Ejecutar en Local
 
+# Opción 1: Script automatizado (recomendado)
+python run_deos.py
+
+# Opción 2: Comando directo
 uvicorn app.main:app --reload
 
     Docs interactivos
