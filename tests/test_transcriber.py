@@ -13,7 +13,7 @@ def patch_whisper_model(monkeypatch):
 
     class FakeModel:
         def transcribe(self, path):
-            return {"text": ""}
+            return {"text": "Mock transcription", "duration": 10.5}
 
     def fake_load_model(name):
         return FakeModel()
@@ -28,7 +28,9 @@ def test_transcribe_dummy(tmp_path):
     dummy.write_bytes(b"")
 
     # Ahora transcribe_audio usará el FakeModel y no fallará con ffmpeg
-    text = transcribe_audio(str(dummy))
+    text, duration = transcribe_audio(str(dummy))
 
     assert isinstance(text, str)
-    assert text == ""
+    assert isinstance(duration, float)
+    assert text == "Mock transcription"
+    assert duration == 10.5
