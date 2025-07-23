@@ -206,7 +206,7 @@ fi
 
 # Probar aplicación
 log_step "Probando aplicación..."
-timeout 10 python -c "
+ggtimeout 10 2>/dev/null || python -c " 2>/dev/null || python -c "
 from app.main import app
 from fastapi.testclient import TestClient
 client = TestClient(app)
