@@ -1,347 +1,129 @@
-DEOS Service
-<div align="center"> <img src="https://raw.githubusercontent.com/tu-org/DEOS/main/docs/logo.png" alt="DEOS Logo" width="200"/> </div>
-📖 Índice
+# 🎵 DEOS - Deep Extraction, Orchestration & Summarization
 
-    Descripción y Objetivos
+DEOS es un microservicio FastAPI que permite descargar, transcribir, resumir y clasificar contenido de YouTube y documentos PDF de manera automática e inteligente.
 
-    Funciones Principales
+## 🚀 Inicio Rápido
 
-    Estado Actual vs. Pendientes
+### Ejecutar DEOS (5 opciones disponibles):
 
-    Tecnologías y Dependencias
+1. **Doble-click (macOS):** `start_deos.command`
+2. **Script rápido:** `./start_deos.sh`
+3. **Script Python:** `python run_deos.py`
+4. **PyCharm:** Usar configuración "DEOS Server"
+5. **Directo:** `uvicorn app.main:app --reload`
 
-    Estructura del Proyecto
+### Probar la API:
+- **Swagger UI:** http://localhost:8000/docs
+- **Postman:** Importar `DEOS_Postman_Collection.json`
 
-    Guía de Uso
+## 📚 **Documentación Completa**
 
-        1. Instalación
+### 🎯 **Para Desarrolladores Frontend**
+- **[📖 API Documentation](docs/FRONTEND_API_DOCUMENTATION.md)** - Guía completa para crear frontends que consuman DEOS
+  - Endpoints detallados con ejemplos
+  - Guía de UX/UI recomendada
+  - Manejo de errores y casos de uso
+  - Flujos de trabajo completos
 
-        2. Configuración
+### 🚀 **Para Despliegue en Producción**
+- **[🛠️ Deployment Roadmap](docs/DEPLOYMENT_ROADMAP.md)** - Plan paso a paso para llevar DEOS a producción
+  - Opciones de hosting (DigitalOcean, AWS, VPS)
+  - Containerización con Docker
+  - CI/CD con GitHub Actions
+  - Monitoreo y seguridad
+  - Estimaciones de costos
 
-        3. Ejecutar en Local
+### 🌟 **Para Expansión del Proyecto**
+- **[🚀 Future Enhancements](docs/FUTURE_ENHANCEMENTS.md)** - Roadmap de mejoras y nuevas funcionalidades
+  - Features de corto, medio y largo plazo
+  - Casos de uso específicos (educación, corporate, media)
+  - Integración con nuevas plataformas
+  - Ideas innovadoras con IA
 
-        4. Docker (opcional)
+### 🧪 **Para Testing**
+- **[📬 Postman Guide](POSTMAN_TESTING_GUIDE.md)** - Guía completa de testing con Postman
 
-    API & Endpoints
+## 🔧 Funcionalidades Principales
 
-        /audio/download
+- **🎵 Descarga de audio** desde YouTube
+- **📝 Transcripción** con OpenAI Whisper
+- **📋 Resumen** automático con multiple niveles
+- **🏷️ Clasificación** semántica con scores
+- **📄 Ingesta de PDFs** con extracción de texto
+- **🔄 Pipeline completo** en un solo endpoint (`/process`)
 
-        /videos …
+## 🛠️ Requerimientos
 
-        /ingest/pdf
+- Python 3.9+
+- ffmpeg (para procesamiento de audio)
+- 4GB+ RAM recomendado
 
-    Testing
+## 📦 Instalación
 
-        Unitarios
+```bash
+# Clonar repositorio
+git clone [repository-url]
+cd deos
 
-        Integración
+# Crear entorno virtual
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
 
-        Colección Postman
-
-    Buenas Prácticas
-
-    Despliegue en Producción
-
-        Estrategia CI/CD
-
-        Entorno y Monitoreo
-
-    Contribuir
-
-    Licencia
-
-📖 Descripción y Objetivos
-
-DEOS (Deep Extraction, Orchestration & Summarization) es un microservicio desarrollado en FastAPI para:
-
-    Descarga de audio desde URLs de YouTube.
-
-    Transcripción de audio a texto (usando OpenAI Whisper).
-
-    Resumen de transcripciones (múltiples niveles).
-
-    Clasificación de resúmenes en etiquetas semánticas.
-
-    Ingesta de PDFs: extracción de texto, resumen y clasificación.
-
-    Persistencia en base de datos SQL (SQLite/PostgreSQL).
-
-Objetivo final:
-Crear un pipeline automatizado que permita a usuarios o sistemas terceros enviar un vídeo o PDF y obtener, de forma
-RESTful, metadatos enriquecidos (transcripción, resumen, etiquetas) con trazabilidad en base de datos.
-🔧 Funciones Principales
-Función / Endpoint Pipeline
-/audio/download 1. Descarga audio → 2. Transcribe → 3. Resume → 4. Clasifica → 5. Persiste registros en BD
-/videos/list    (Pendiente) Listar vídeos procesados, con filtros y paginación
-/audio/process-url Orquesta manual sin persistencia (útil para pruebas rápidas)
-/ingest/pdf 1. Guarda PDF → 2. Extrae texto → 3. Resume → 4. Clasifica → 5. Persiste documento, resumen, etiquetas en BD
-/classify/text    (Pendiente) Recibe texto y devuelve etiquetas sin almacenamiento
-📋 Estado Actual vs. Pendientes
-Tarea Estado
-Descarga de audio con yt-dlp ✅ Completado
-Transcripción con Whisper ✅ Completado
-Resumen con Transformers ✅ Completado
-Clasificación con Sentence‑Transformers ✅ Completado
-Persistencia en BD SQLAlchemy ✅ Completado
-Endpoint /audio/download ✅ Completado
-Endpoint /ingest/pdf ✅ Completado
-Tests unitarios de CRUD, services y orchestrador ✅ Completado
-Tests de endpoints con FastAPI TestClient ✅ Completado
-Colección Postman para todos los endpoints ✅ Completado
-CI / CD con GitHub Actions (deploy automático)    🚧 En progreso
-Soporte PostgreSQL en producción 🚧 En progreso
-Documentación OpenAPI completa 🚧 En revisión
-Dashboard de monitoreo (Prometheus / Grafana)    🚧 Pendiente
-Endpoint de gestión de vídeos PDF 🚧 Pendiente
-🛠️ Tecnologías y Dependencias
-
-    Backend & API:
-
-        FastAPI
-
-        Uvicorn
-
-        Pydantic V2
-
-    Descarga de vídeo:
-
-        yt‑dlp
-
-    Audio & ML:
-
-        OpenAI Whisper
-
-        Transformers (Hugging Face)
-
-        Sentence‑Transformers
-
-        PyTorch
-
-    PDF:
-
-        PyMuPDF (fitz)
-
-        pdfplumber
-
-    BD & Migrations:
-
-        SQLAlchemy ORM
-
-        Alembic
-
-    Testing:
-
-        pytest
-
-        httpx (TestClient)
-
-    Infra & DevOps:
-
-        Docker
-
-        GitHub Actions
-
-        (Próximamente K8s & Helm)
-
-📁 Estructura del Proyecto
-
-DEOS/
-├── app/
-│ ├── api/
-│ │ ├── audio.py # Endpoints de audio
-│ │ ├── videos.py # Endpoints de vídeos
-│ │ ├── ingestion.py # Endpoints PDF
-│ │ └── classify.py # (Pendiente)
-│ ├── core/
-│ │ ├── config.py # Settings (pydantic-settings)
-│ │ └── logger.py # Configuración de logging
-│ ├── db/
-│ │ ├── session.py # Engine, Base y get_db
-│ │ ├── models.py # SQLAlchemy models
-│ │ ├── crud.py # Funciones CRUD
-│ │ └── alembic/ # Migraciones
-│ ├── services/
-│ │ ├── downloader.py # descarga con yt-dlp
-│ │ ├── transcriber.py # llamada a Whisper
-│ │ ├── summarization.py # Hugging Face summaries
-│ │ ├── classifier.py # sentence-transformers
-│ │ ├── orchestrator.py # pipeline audio & PDF
-│ │ └── pdf_processor.py # extracción y persistencia de PDF
-│ └── main.py # App, routers e inicio
-├── tests/ # pytest tests
-│ ├── test_*_api.py # endpoints
-│ ├── test_crud.py # CRUD unitarios
-│ └── test_orchestrator*.py # flujos completos
-├── docs/
-│ ├── postman_collection.json
-│ └── architecture.md
-├── Dockerfile
-├── docker-compose.yml
-├── requirements.txt
-├── README.md # ← ¡Tú estás aquí!
-└── .github/
-└── workflows/
-└── ci.yml # Tests + lint + build + deploy
-
-🚀 Guía de Uso
-
-1. Instalación
-
-git clone https://github.com/tu-org/DEOS.git
-cd DEOS
-python3.9 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip setuptools wheel
+# Instalar dependencias
 pip install -r requirements.txt
 
-    Requisito: Python ≥ 3.9 (3.8 ya no es compatible)
-
-2. Configuración
-
-Edita app/core/config.py o crea un .env con:
-
-DATABASE_URL=sqlite:///./data/deos.db
-DOWNLOAD_DIR=./data/downloads
-LOG_LEVEL=INFO
-
-3. Ejecutar en Local
-
-# Opción 1: Doble-click (macOS) 🖱️
-# Hacer doble-click en: start_deos.command
-
-# Opción 2: Script bash rápido 🚀
-bash start_deos.sh
-
-# Opción 3: Script automatizado (recomendado) ⚡
+# Ejecutar
 python run_deos.py
+```
 
-# Opción 4: Comando directo
-uvicorn app.main:app --reload
+## 🧪 Testing
 
-# Opción 5: PyCharm 🎯
-# Usar configuración "DEOS Server" en Run/Debug
+```bash
+# Tests unitarios
+python -m pytest tests/ -v
 
-    Docs interactivos
+# Postman collection
+# Importar DEOS_Postman_Collection.json en Postman
+```
 
-        Swagger: http://127.0.0.1:8000/docs
+## 📊 API Endpoints
 
-        ReDoc: http://127.0.0.1:8000/redoc
+- `POST /process` - **⭐ Endpoint principal** - Pipeline completo
+- `POST /audio/download` - Descarga audio de YouTube
+- `POST /audio/transcribe` - Transcribe audio a texto
+- `POST /audio/summarize` - Resume texto
+- `POST /classify` - Clasifica contenido
+- `GET /videos/` - Lista videos procesados
+- `POST /ingest/pdf` - Procesa documentos PDF
 
-4. Docker (opcional)
+**Ver documentación completa en:** http://localhost:8000/docs
 
-docker-compose up --build
+## 🎯 Próximos Pasos
 
-📡 API & Endpoints
-/audio/download (POST)
+### **Inmediato:**
+1. **Frontend Development** usando `docs/FRONTEND_API_DOCUMENTATION.md`
+2. **Production Deployment** siguiendo `docs/DEPLOYMENT_ROADMAP.md`
 
-    Body:
+### **Corto plazo:**
+- Dashboard analytics
+- Batch processing
+- Sentiment analysis
+- Enterprise features
 
-{ "url": "https://www.youtube.com/watch?v=..." }
+### **Ideas futuras:**
+- Mobile apps
+- Nuevas plataformas (Twitch, Podcasts)
+- IA conversacional
+- Multi-idioma
 
-Response:
+## 🤝 Contribuciones
 
-    {
-      "filename": "...mp3",
-      "title": "...",
-      "duration": 123.4,
-      "page_url": "...youtube..."
-    }
+¡Las contribuciones son bienvenidas! Ve el roadmap de mejoras futuras para ideas de desarrollo.
 
-/videos/list (GET)
+## 📄 Licencia
 
-    Pendiente: listará los vídeos ya procesados.
+[Especificar licencia]
 
-/ingest/pdf (POST)
+---
 
-    Form‑data:
-
-        file: archivo PDF
-
-        topic (opcional)
-
-        level (opcional, e.g. “short”/“medium”/“long”)
-
-    Response:
-
-    {
-      "file_path": "data/downloads/test.pdf",
-      "topic": "miTema",
-      "level": "short",
-      "extracted_text": "...",
-      "summary": "...",
-      "tags": [{ "tag": "...", "score": 0.9 }, …]
-    }
-
-🧪 Testing
-
-    Unitarios
-
-    pytest tests/test_crud.py tests/test_downloader.py …
-
-    Integración
-
-        Test de endpoints vía fastapi.testclient
-
-        Orquestador completo
-
-    Postman
-
-        Importa docs/postman_collection.json
-
-        Ejecuta la carpeta “DEOS Service” en Postman, revisa variables de entorno
-
-        Verifica todos los métodos (audio, PDF, clasificación…)
-
-🌟 Buenas Prácticas
-
-    Dependencias acotadas en requirements.txt.
-
-    Tests completos: > 90% de coverage en servicios, CRUD y orquestación.
-
-    Linter & Formatter: configuración de black y flake8 en el pipeline CI.
-
-    DI SQLAlchemy: sesiones por dependencia (get_db).
-
-    Logging estructurado: nivel configurable, salida a consola y fichero.
-
-    Migrations: control de esquema con Alembic.
-
-🚧 Despliegue en Producción
-
-    CI/CD con GitHub Actions:
-
-        Run tests → Lint → Build Docker image → Push a registry
-
-        Despliegue automático a staging
-
-        Aprobar despliegue a prod manualmente
-
-    Infraestructura
-
-        Kubernetes (Helm charts) con 2 réplicas, auto‑scale
-
-        PostgreSQL gestionado (AWS RDS / Cloud SQL)
-
-    Monitoreo & Alertas
-
-        Exponer métricas Prometheus
-
-        Dashboards en Grafana
-
-        Alertas Slack/Email para errores 5xx o latencias altas
-
-🤝 Contribuir
-
-    Haz un fork y crea una branch.
-
-    Sigue la Guía de Estilo (.github/CONTRIBUTING.md).
-
-    Añade tests para nuevas funcionalidades.
-
-    Abre Pull Request.
-
-📄 Licencia
-
-Este proyecto está bajo la licencia MIT. Lee el archivo LICENSE para más detalles.
-
-    DEOS: de la extracción profunda al despliegue robusto. ¡Bienvenido/a!
+**🚀 DEOS - Transformando contenido multimedia en insights accionables**
