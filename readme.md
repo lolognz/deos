@@ -206,11 +206,20 @@ LOG_LEVEL=INFO
 
 3. Ejecutar en Local
 
-# Opción 1: Script automatizado (recomendado)
+# Opción 1: Doble-click (macOS) 🖱️
+# Hacer doble-click en: start_deos.command
+
+# Opción 2: Script bash rápido 🚀
+bash start_deos.sh
+
+# Opción 3: Script automatizado (recomendado) ⚡
 python run_deos.py
 
-# Opción 2: Comando directo
+# Opción 4: Comando directo
 uvicorn app.main:app --reload
+
+# Opción 5: PyCharm 🎯
+# Usar configuración "DEOS Server" en Run/Debug
 
     Docs interactivos
 
