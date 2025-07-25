@@ -1,12 +1,13 @@
 import logging
 import os
+from typing import Tuple
 
 from yt_dlp import YoutubeDL
 
 logger = logging.getLogger(__name__)
 
 
-def download_audio_from_youtube(youtube_url: str) -> tuple[str, str, int, str]:
+def download_audio_from_youtube(youtube_url: str) -> Tuple[str, str, int, str]:
     logger.info(f"Descargando audio de {youtube_url}")
     download_dir = os.getenv("DOWNLOAD_DIR", "data/downloads")
     os.makedirs(download_dir, exist_ok=True)
