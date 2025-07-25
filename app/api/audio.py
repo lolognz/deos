@@ -58,8 +58,8 @@ async def transcribe_audio_endpoint(req: TranscribeRequest):
     Recibe { "file_path": "/ruta/a/audio.mp3" } y devuelve la transcripción completa.
     """
     try:
-        text = transcribe_audio(req.file_path)
-        return {"transcription": text}
+        text, duration = transcribe_audio(req.file_path)
+        return {"transcription": text, "duration": duration}
     except FileNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:

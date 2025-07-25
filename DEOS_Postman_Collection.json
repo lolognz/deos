@@ -1,0 +1,734 @@
+{
+	"info": {
+		"name": "DEOS Service - Complete API Testing",
+		"description": "Batería completa de pruebas para todos los endpoints del servicio DEOS (Deep Extraction, Orchestration & Summarization)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"version": "1.0.0"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "test_youtube_url",
+			"value": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+			"type": "string"
+		},
+		{
+			"key": "short_youtube_url",
+			"value": "https://www.youtube.com/watch?v=2g811Eo7K8U",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🎵 Audio Endpoints",
+			"item": [
+				{
+					"name": "Download Audio from YouTube",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has required fields', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('path');",
+									"    pm.expect(jsonData).to.have.property('title');",
+									"    pm.expect(jsonData).to.have.property('duration');",
+									"    pm.expect(jsonData).to.have.property('url');",
+									"});",
+									"",
+									"// Guardar el path del audio para otros tests",
+									"const jsonData = pm.response.json();",
+									"pm.environment.set('audio_path', jsonData.path);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"url\": \"{{test_youtube_url}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/download",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "download"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download Bulk Audio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has tasks array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('tasks');",
+									"    pm.expect(jsonData.tasks).to.be.an('array');",
+									"    pm.expect(jsonData.tasks.length).to.equal(2);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"urls\": [\n    \"{{test_youtube_url}}\",\n    \"{{short_youtube_url}}\"\n  ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/download/bulk",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "download", "bulk"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transcribe Audio",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has transcription and duration', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('transcription');",
+									"    pm.expect(jsonData).to.have.property('duration');",
+									"    pm.expect(jsonData.transcription).to.be.a('string');",
+									"    pm.expect(jsonData.duration).to.be.a('number');",
+									"});",
+									"",
+									"// Guardar transcripción para otros tests",
+									"const jsonData = pm.response.json();",
+									"pm.environment.set('transcription_text', jsonData.transcription);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"file_path\": \"{{audio_path}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/transcribe",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "transcribe"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Summarize Text",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has summary', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('summary');",
+									"    pm.expect(jsonData.summary).to.be.a('string');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"{{transcription_text}}\",\n  \"level\": \"short\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/summarize",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "summarize"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🔄 Process Endpoint",
+			"item": [
+				{
+					"name": "Complete Process Pipeline",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has all required fields', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('url');",
+									"    pm.expect(jsonData).to.have.property('audio_path');",
+									"    pm.expect(jsonData).to.have.property('transcript');",
+									"    pm.expect(jsonData).to.have.property('transcript_duration');",
+									"    pm.expect(jsonData).to.have.property('summary');",
+									"    pm.expect(jsonData).to.have.property('tags');",
+									"    pm.expect(jsonData.tags).to.be.an('array');",
+									"    pm.expect(jsonData.transcript_duration).to.be.a('number');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"url\": \"{{test_youtube_url}}\",\n  \"topic\": \"music\",\n  \"summary_level\": \"medium\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/process",
+							"host": ["{{base_url}}"],
+							"path": ["process"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏷️ Classification Endpoint",
+			"item": [
+				{
+					"name": "Classify Text",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has tags array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('tags');",
+									"    pm.expect(jsonData.tags).to.be.an('array');",
+									"});",
+									"",
+									"pm.test('Tags have proper structure', function () {",
+									"    const jsonData = pm.response.json();",
+									"    if (jsonData.tags.length > 0) {",
+									"        const firstTag = jsonData.tags[0];",
+									"        pm.expect(firstTag).to.have.property('tag');",
+									"        pm.expect(firstTag).to.have.property('score');",
+									"        pm.expect(firstTag.score).to.be.a('number');",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"This is a video about machine learning and artificial intelligence. It covers topics like neural networks, deep learning, and data science.\",\n  \"top_k\": 3,\n  \"threshold\": 0.1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/classify",
+							"host": ["{{base_url}}"],
+							"path": ["classify"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Classify with Custom Parameters",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"Esta es una charla sobre música clásica, compositores como Mozart, Beethoven y Bach. También se habla de instrumentos como piano, violín y orquesta sinfónica.\",\n  \"top_k\": 5,\n  \"threshold\": 0.05\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/classify",
+							"host": ["{{base_url}}"],
+							"path": ["classify"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🎬 Videos Endpoints",
+			"item": [
+				{
+					"name": "List All Videos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response is an array', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"// Guardar ID del primer video si existe",
+									"const jsonData = pm.response.json();",
+									"if (jsonData.length > 0) {",
+									"    pm.environment.set('video_id', jsonData[0].id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/",
+							"host": ["{{base_url}}"],
+							"path": ["videos", ""]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Videos with Pagination",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/?skip=0&limit=5",
+							"host": ["{{base_url}}"],
+							"path": ["videos", ""],
+							"query": [
+								{
+									"key": "skip",
+									"value": "0"
+								},
+								{
+									"key": "limit",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Videos with Topic Filter",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/?topic=music",
+							"host": ["{{base_url}}"],
+							"path": ["videos", ""],
+							"query": [
+								{
+									"key": "topic",
+									"value": "music"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Videos with Date Range",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/?date_from=2024-01-01T00:00:00&date_to=2024-12-31T23:59:59",
+							"host": ["{{base_url}}"],
+							"path": ["videos", ""],
+							"query": [
+								{
+									"key": "date_from",
+									"value": "2024-01-01T00:00:00"
+								},
+								{
+									"key": "date_to",
+									"value": "2024-12-31T23:59:59"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Video by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200 or 404', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+									"});",
+									"",
+									"if (pm.response.code === 200) {",
+									"    pm.test('Response has video details', function () {",
+									"        const jsonData = pm.response.json();",
+									"        pm.expect(jsonData).to.have.property('id');",
+									"        pm.expect(jsonData).to.have.property('url');",
+									"        pm.expect(jsonData).to.have.property('title');",
+									"        pm.expect(jsonData).to.have.property('audio');",
+									"        pm.expect(jsonData).to.have.property('transcript');",
+									"        pm.expect(jsonData).to.have.property('summary');",
+									"        pm.expect(jsonData).to.have.property('classifications');",
+									"    });",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/{{video_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["videos", "{{video_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Non-existent Video (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('Error message is present', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('detail');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/videos/99999",
+							"host": ["{{base_url}}"],
+							"path": ["videos", "99999"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "📄 PDF Ingestion",
+			"item": [
+				{
+					"name": "Ingest PDF (Form Data)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response has required fields', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('message');",
+									"    pm.expect(jsonData).to.have.property('file_path');",
+									"    pm.expect(jsonData).to.have.property('topic');",
+									"    pm.expect(jsonData).to.have.property('level');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": [],
+									"description": "Upload a PDF file here"
+								},
+								{
+									"key": "topic",
+									"value": "test_document",
+									"type": "text"
+								},
+								{
+									"key": "level",
+									"value": "short",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/ingest/pdf",
+							"host": ["{{base_url}}"],
+							"path": ["ingest", "pdf"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "🏥 Health & Status",
+			"item": [
+				{
+					"name": "API Documentation",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/docs",
+							"host": ["{{base_url}}"],
+							"path": ["docs"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "OpenAPI Schema",
+					"request": {
+						"method": "GET",
+						"url": {
+							"raw": "{{base_url}}/openapi.json",
+							"host": ["{{base_url}}"],
+							"path": ["openapi.json"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "❌ Error Cases",
+			"item": [
+				{
+					"name": "Invalid YouTube URL",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 422 or 500', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([422, 500]);",
+									"});",
+									"",
+									"pm.test('Error detail is present', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('detail');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"url\": \"invalid-url\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/download",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "download"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Transcribe Non-existent File",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code is 404', function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test('Error detail is present', function () {",
+									"    const jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('detail');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"file_path\": \"/non/existent/file.mp3\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/audio/transcribe",
+							"host": ["{{base_url}}"],
+							"path": ["audio", "transcribe"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Empty Classification Text",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"text\": \"\",\n  \"top_k\": 3,\n  \"threshold\": 0.1\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/classify",
+							"host": ["{{base_url}}"],
+							"path": ["classify"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Configuración global pre-request",
+					"console.log('🚀 Ejecutando test de DEOS API...');"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Tests globales",
+					"pm.test('Response time is less than 30 seconds', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(30000);",
+					"});",
+					"",
+					"pm.test('Response has Content-Type header', function () {",
+					"    pm.response.to.have.header('Content-Type');",
+					"});"
+				]
+			}
+		}
+	]
+}
